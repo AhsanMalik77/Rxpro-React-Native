@@ -13,6 +13,7 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CalendarDays, Eye, EyeOff } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { signupuser } from '../../Services/authservice';
 
 const UserSignUpForm = ({ navigation }) => {
   const [username, setUsername] = useState('');
@@ -27,22 +28,58 @@ const UserSignUpForm = ({ navigation }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleDateChange = (event, selectedDate) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      // Format: DD/MM/YYYY
-      const formattedDate = selectedDate.toLocaleDateString();
-      setDateOfBirth(formattedDate);
-    }
-  };
+  setShowDatePicker(false);
+  
+  if (selectedDate) {
+    // Extract Year, Month, and Day
+    const year = selectedDate.getFullYear();
+    // Months 0-11 hotay hain, isliye +1 kiya aur '0' add kiya agar single digit ho
+    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(selectedDate.getDate()).padStart(2, '0');
 
-  const handleSubmit = () => {
+    // Visual Studio / SQL / MongoDB standard format: YYYY-MM-DD
+    const formattedDate = `${year}-${month}-${day}`;
+    
+    setDateOfBirth(formattedDate);
+    console.log("Formatted Date for Backend:", formattedDate);
+  }
+};
+
+ const handleSubmit = async () => {
+    // Basic Validation
     if (!username || !email || !contact || !dateOfBirth || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill all fields');
       return;
     }
-    Alert.alert('Success', 'User Registered');
-  };
 
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
+    // 3. API Call ka setup
+
+    try {
+      // Backend ke "Customer" model ke mutabiq object taiyar karein
+      const userData = {
+        name: username,
+        email: email,
+        password: password,
+        contact: contact,
+        dob: dateOfBirth, // Agar backend mein field hai to add karein
+      }; 
+
+      const result = await signupuser(userData); // Service call
+      
+      Alert.alert('Success', 'Account Created Successfully!');
+      navigation.navigate('SignIn'); // Signup ke baad Login par bhej dein
+
+    } catch (error) {
+      Alert.alert('Signup Failed', error.message);
+    } finally {
+      // Loading band
+    }
+  };
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>

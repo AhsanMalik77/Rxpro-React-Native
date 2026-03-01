@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Eye, EyeOff } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { loginUser } from '../../Services/authservice';
+import { loginuser } from '../../Services/authservice';
 
 const SignInScreen = ({ navigation, onLogin }) => {  // ✅ onLogin prop yahan add karo
   const [email, setEmail] = useState('');
@@ -24,7 +24,7 @@ const SignInScreen = ({ navigation, onLogin }) => {  // ✅ onLogin prop yahan a
   }
 
   try {
-    const userData = await loginUser(email, password);
+    const userData = await loginuser(email, password);
     
     // Backend code ke mutabiq:
     // Response mein 'role' aa raha hai (e.g., "customer", "Rider", "Store")
@@ -32,7 +32,7 @@ const SignInScreen = ({ navigation, onLogin }) => {  // ✅ onLogin prop yahan a
     if (userData && userData.role) {
       // Agar role "customer" hai to usey "user" mein convert karein 
       // kyunki aapke App.js mein shayad 'user' condition lagi hogi
-      let roleToPath = userData.role === 'customer' ? 'user' : userData.role;
+      let roleToPath = userData.role;
       
       onLogin(roleToPath); 
     } else {

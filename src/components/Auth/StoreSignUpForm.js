@@ -12,8 +12,9 @@ import {
 import { launchImageLibrary } from 'react-native-image-picker';
 import { MapPin, Eye, EyeOff, Plus } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { signupstore } from '../../Services/authservice';
 
-const StoreSignUpForm = () => {
+const StoreSignUpForm = ({navigation}) => {
   const [storeName, setStoreName] = useState('');
   const [storeLocation, setStoreLocation] = useState('');
   const [storeImages, setStoreImages] = useState([]);
@@ -21,6 +22,7 @@ const StoreSignUpForm = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [storeEmail,setstoreEmail]=useState('')
 
   const handlePickImage = () => {
     launchImageLibrary({ mediaType: 'photo' }, (response) => {
@@ -28,6 +30,39 @@ const StoreSignUpForm = () => {
         setStoreImages([...storeImages, response.assets[0]]);
       }
     });
+  };
+  const handlesubmit= async ()=>{
+//  if(!storeName||!storeLocation||!password||storeEmail){
+//     Alert.alert('Error', 'Please fill all fields');
+//         return;
+//  }
+
+ if(password!=confirmPassword){
+   Alert.alert('Error', 'Password And confirmPassword dosent match');
+      Alert.alert('Error', 'Please fill all fields');
+    return;
+ }
+ try{
+
+ const storedata={
+  name:storeName,
+  email: storeEmail,
+  location: storeLocation,
+  images: null,
+  password:password
+}
+const result = await signupstore(storedata)
+ 
+      Alert.alert('Success', 'Account Created Successfully!');
+      navigation.navigate('SignIn'); // Signup ke baad Login par bhej dein
+
+ }
+ catch (error) {
+       Alert.alert('Signup Failed', error.message);
+     } 
+ 
+
+
   };
 
   return (
@@ -41,6 +76,14 @@ const StoreSignUpForm = () => {
           placeholderTextColor="#BDBDBD"
           value={storeName}
           onChangeText={setStoreName}
+        />
+         {/* Store EMail */}
+           <TextInput
+          style={styles.input}
+          placeholder="Email Address"
+          placeholderTextColor="#BDBDBD"
+          value={storeEmail}
+          onChangeText={setstoreEmail}
         />
 
         {/* Store Location */}
@@ -104,7 +147,7 @@ const StoreSignUpForm = () => {
         </View>
 
         {/* Submit Button */}
-        <TouchableOpacity style={styles.submitButton}>
+        <TouchableOpacity style={styles.submitButton} onPress={handlesubmit}>
           <Text style={styles.submitButtonText}>Submit Application</Text>
         </TouchableOpacity>
 
