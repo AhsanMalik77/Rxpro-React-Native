@@ -30,11 +30,17 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userType, setUserType] = useState(''); // 'user' ya 'medical'
-
+   const [userId, setUserId] = useState(null);
+   const[name,setname]=useState('')
   // Function to handle login from SignInScreen
-  const handleLogin = (type) => {
+  const handleLogin = (type,id,name) => {
     setUserType(type);
+    setUserId(id);
+    console.log(name)
+    setname(name);
+    
     setIsLoggedIn(true);
+
   };
 
   return (
@@ -51,7 +57,12 @@ const App = () => {
         ) : userType === 'user' ? (
           // ✅ User Screens - Sirf user ke liye
           <>
-            <Stack.Screen name="MainApp" component={Usertab} />
+            <Stack.Screen name="MainApp" >
+         {(props)=><Usertab {...props} userId={userId} name={name} />}
+            </Stack.Screen>
+ 
+            
+            
             <Stack.Screen name="AddNewMember" component={Addnewmember} />
             <Stack.Screen name="AddphR" component={Addphr} />
             <Stack.Screen name="AddrX" component={Addrx} />

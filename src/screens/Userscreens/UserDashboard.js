@@ -1,126 +1,86 @@
-// UserDashboard.js - Complete with Recent Orders and Medicine Images
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  ScrollView, 
+  TouchableOpacity, 
+  TextInput,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Clock, Package, ChevronDown, Home, FileText, ShoppingBag, User } from 'lucide-react-native';
-import UserHeader from '../../components/UserHeader';
-import UserSearchbr from '../../components/UserSearchbr';
-import AddrxButton from '../../buttons/AddrxButton';
-import AddPHRButton from '../../buttons/AddPHRButton';
-import AddMemButton from '../../buttons/AddMemButton';
+import { 
+  Search, 
+  Plus, 
+  FileText, 
+  Users, 
+} from 'lucide-react-native';
 
-const UserDashboard = ({ navigation }) => {
-  // Recent orders data with image placeholders
-  const recentOrders = [
-    {
-      id: 1,
-      date: '29.06.2025',
-      time: '15:18',
-      orderNo: 'VSLR-298A',
-      items: [
-        { 
-          name: 'Paracetamol-Ratiopharm 500mg Tab...', 
-          qty: '10pcs x5', 
-          price: '975 Rs',
-          image: 'https://via.placeholder.com/50x50/00C874/ffffff?text=P' // Placeholder image
-        },
-        { 
-          name: 'Gelomyrtol Forte 20 ST', 
-          qty: '20pcs x1', 
-          price: '1295 Rs',
-          image: 'https://via.placeholder.com/50x50/00C874/ffffff?text=G'
-        },
-        { 
-          name: 'Aesop Resurrection', 
-          qty: '500ml soap x1', 
-          price: '220 Rs',
-          image: 'https://via.placeholder.com/50x50/00C874/ffffff?text=A'
-        }
-      ],
-      totalItems: 3,
-      totalPrice: 2490
-    },
-    {
-      id: 2,
-      date: '16.07.2022',
-      time: '20:53',
-      orderNo: 'M2Z4-VVVY2',
-      items: [
-        { 
-          name: 'Sample Medicine', 
-          qty: '10pcs x1', 
-          price: '500 Rs',
-          image: 'https://via.placeholder.com/50x50/00C874/ffffff?text=S'
-        }
-      ],
-      totalItems: 1,
-      totalPrice: 500
-    }
-  ];
+const UserDashboard = ({ navigation, userId,name}) => {
+  
+ // Testing ke liye 'Ali' likha hai
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollView} showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          {/* Header */}
-          <UserHeader userName="Ahsan Ali" />
-
-          {/* Search Bar */}
-          <UserSearchbr />
-
-          {/* Button Row */}
-          <View style={styles.buttonRow}>
-            <AddrxButton />
-            <AddPHRButton />
-            <AddMemButton />
+          
+          {/* --- Header Area --- */}
+          <View style={styles.header}>
+            <Text style={styles.greetingText}>
+              Salam, <Text style={styles.userName}>{name}</Text>
+            </Text>
+            {/* ID yahan nazar aayegi */}
+            <Text style={{color: 'gray', fontSize: 12}}>ID: {userId ? userId : "Not Found"}</Text>
           </View>
 
-          {/* Recent Orders Section */}
+          {/* --- Search Bar --- */}
+          <View style={styles.searchContainer}>
+            <Search color="#999" size={20} style={styles.searchIcon} />
+            <TextInput 
+              placeholder="Search Medicine, Store" 
+              style={styles.searchInput}
+              placeholderTextColor="#999"
+            />
+          </View>
+
+          {/* --- Action Buttons --- */}
+          <View style={styles.buttonRow}>
+            <TouchableOpacity 
+              style={styles.actionBtnWrapper} 
+              onPress={() => navigation.navigate('AddrX')}
+            >
+              <View style={[styles.iconCircle, { backgroundColor: '#E8F9F1' }]}>
+                <Plus color="#00C874" size={24} />
+              </View>
+              <Text style={styles.btnText}>Add Rx</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.actionBtnWrapper} 
+              onPress={() => navigation.navigate('Phr')}
+            >
+              <View style={[styles.iconCircle, { backgroundColor: '#E8F9F1' }]}>
+                <FileText color="#00C874" size={24} />
+              </View>
+              <Text style={styles.btnText}>Add PHR</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.actionBtnWrapper}>
+              <View style={[styles.iconCircle, { backgroundColor: '#E8F9F1' }]}>
+                <Users color="#00C874" size={24} />
+              </View>
+              <Text style={styles.btnText}>Add Member</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* --- Recent Orders Section --- */}
           <View style={styles.recentOrdersSection}>
             <Text style={styles.sectionTitle}>Recent Orders</Text>
-
-            {recentOrders.map((order) => (
-              <View key={order.id} style={styles.orderCard}>
-                {/* Order Header */}
-                <View style={styles.orderHeader}>
-                  <View style={styles.orderDateTime}>
-                    <Clock color="#00C874" size={16} />
-                    <Text style={styles.orderDateTimeText}>
-                      Delivered on {order.date}, {order.time}
-                    </Text>
-                  </View>
-                  <Text style={styles.orderNumber}>{order.orderNo}</Text>
-                </View>
-
-                {/* Order Items with Images */}
-                {order.items.map((item, index) => (
-                  <View key={index} style={styles.orderItem}>
-                    <View style={styles.itemImageContainer}>
-                      <Image 
-                        source={{ uri: item.image }} 
-                        style={styles.itemImage}
-                      />
-                    </View>
-                    <View style={styles.itemInfo}>
-                      <Text style={styles.itemName}>{item.name}</Text>
-                      <Text style={styles.itemQuantity}>{item.qty}</Text>
-                    </View>
-                    <Text style={styles.itemPrice}>{item.price}</Text>
-                  </View>
-                ))}
-
-                {/* Order Footer */}
-                <View style={styles.orderFooter}>
-                  <TouchableOpacity style={styles.lessItemsButton}>
-                    <Text style={styles.lessItemsText}>— LESS ITEMS</Text>
-                  </TouchableOpacity>
-                  <Text style={styles.orderTotal}>
-                    {order.totalItems} Items | {order.totalPrice} Rs
-                  </Text>
-                </View>
-              </View>
-            ))}
+            <View style={styles.orderPlaceholder}>
+                <Text style={{color: '#999'}}>No orders for ID: {userId}</Text>
+            </View>
           </View>
+
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -128,121 +88,36 @@ const UserDashboard = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  scrollView: {
-    flexGrow: 1,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 30,
-    paddingHorizontal: 0,
-    width: '100%',
-    backgroundColor: '#ffffff',
-  },
-  recentOrdersSection: {
-    marginTop: 10,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
-  },
-  orderCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 15,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#f0f0f0',
-  },
-  orderHeader: {
-    marginBottom: 15,
-  },
-  orderDateTime: {
+  safeArea: { flex: 1, backgroundColor: '#fff' },
+  scrollView: { paddingBottom: 20 },
+  container: { paddingHorizontal: 20 },
+  header: { marginTop: 20, marginBottom: 15 },
+  greetingText: { fontSize: 22, color: '#00C874', fontWeight: '400' },
+  userName: { fontWeight: 'bold', color: '#333' },
+  searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
-    marginBottom: 5,
+    backgroundColor: '#F5F7F9',
+    borderRadius: 25,
+    paddingHorizontal: 15,
+    height: 50,
+    marginBottom: 25,
   },
-  orderDateTimeText: {
-    fontSize: 14,
-    color: '#666',
+  searchIcon: { marginRight: 10 },
+  searchInput: { flex: 1, fontSize: 16, color: '#333' },
+  buttonRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 30 },
+  actionBtnWrapper: { alignItems: 'center', width: '30%' },
+  iconCircle: {
+    width: 60, height: 60, borderRadius: 20,
+    justifyContent: 'center', alignItems: 'center', marginBottom: 8,
   },
-  orderNumber: {
-    fontSize: 14,
-    color: '#00C874',
-    fontWeight: '500',
-  },
-  orderItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f5f5f5',
-  },
-  itemImageContainer: {
-    marginRight: 10,
-  },
-  itemImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: '#f0f0f0',
-  },
-  itemInfo: {
-    flex: 1,
-    marginLeft: 5,
-  },
-  itemName: {
-    fontSize: 14,
-    color: '#333',
-    fontWeight: '500',
-    marginBottom: 2,
-  },
-  itemQuantity: {
-    fontSize: 12,
-    color: '#999',
-  },
-  itemPrice: {
-    fontSize: 14,
-    color: '#333',
-    fontWeight: '500',
-    marginLeft: 10,
-  },
-  orderFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 15,
-    paddingTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
-  },
-  lessItemsButton: {
-    paddingVertical: 5,
-  },
-  lessItemsText: {
-    fontSize: 14,
-    color: '#00C874',
-    fontWeight: '500',
-  },
-  orderTotal: {
-    fontSize: 14,
-    color: '#333',
-    fontWeight: '600',
-  },
+  btnText: { fontSize: 13, fontWeight: '600', color: '#333' },
+  recentOrdersSection: { marginTop: 10 },
+  sectionTitle: { fontSize: 24, fontWeight: 'bold', color: '#222', marginBottom: 15 },
+  orderPlaceholder: { 
+    height: 100, backgroundColor: '#f9f9f9', borderRadius: 10, 
+    justifyContent: 'center', alignItems: 'center', borderStyle: 'dashed', borderWidth: 1, borderColor: '#ccc' 
+  }
 });
 
 export default UserDashboard;

@@ -27,8 +27,12 @@ const styles = StyleSheet.create({
 
 const Tab = createBottomTabNavigator();
 
-export default function Usertab() {
-  console.log("Usertab rendered successfully");
+export default function Usertab({userId,name}) {
+  const id=userId
+
+console.log("Usertab ko ye ID mili:", id);
+console.log(name);
+
   
   return (
     <Tab.Navigator
@@ -45,14 +49,19 @@ export default function Usertab() {
     >
       <Tab.Screen 
         name="Home" 
-        component={UserDashboard}
+       
+        
+        
         options={{
           tabBarIcon: ({ color, size }) => (
             <Home color={color} size={size} />
+
           ),
           tabBarLabel: 'Home',
-        }}
-      />
+        }}> 
+     {(props) => <UserDashboard {...props} userId={userId} name={name} />}
+        </Tab.Screen>
+   
       <Tab.Screen 
         name="Phr" 
         component={PhrScreen}  // ✅ Ab defined hai
@@ -61,8 +70,10 @@ export default function Usertab() {
             <HeartPulse color={color} size={size} />
           ),
           tabBarLabel: 'PHR',
-        }}
-      />
+        }}/>
+             
+   
+
       <Tab.Screen 
         name="Orders" 
         component={OrdersScreen}  // ✅ Ab defined hai
